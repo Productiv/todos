@@ -1,0 +1,14 @@
+extends layout
+
+block content
+  h1 todos
+  input.add-todo(type="text", placeholder="new todo")
+  div.todos
+    - console.log('todos: ', todos);
+    each todo in todos
+      span.todo
+        = todo.title
+        input(type="checkbox", checked="#{todo.done}")
+
+block javascripts
+  script(src="/javascripts/todos.js")

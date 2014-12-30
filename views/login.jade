@@ -1,0 +1,41 @@
+extends layout
+
+block stylesheets
+  link(rel="stylesheet", href="/stylesheets/components/nav-tabs.css")
+  link(rel="stylesheet", href="/stylesheets/login.css")
+
+block content
+  .row
+    .col-md-4.col-md-offset-4
+      ul.nav.nav-tabs
+        li.signup-link.presentation
+          a(href="#") Sign Up
+        li.login-link.presentation.active
+          a(href="#") Log In
+      .panel.panel-default.tab-panel
+        .panel-body
+          p.notice
+          .forms
+            form.form.signup(role="form", hidden)
+              .form-group
+                input.form-control.name(type="text", placeholder="Name")
+              .form-group
+                input.form-control.email(type="email", placeholder="Email")
+              .form-group
+                input.form-control.password(type="password", placeholder="Password")
+              .checkbox
+                label
+                  input.checkbox.teacher(type="checkbox")
+                  | Teacher?
+              .actions
+                button.btn.btn-default.signup Sign Up
+            form.form.login
+              .form-group
+                input.form-control.email(type="email", placeholder="Email")
+              .form-group
+                input.form-control.password(type="password", placeholder="Password")
+              .actions
+                button.btn.btn-default.login Log In
+
+block javascripts
+  script(src="/javascripts/login.js")
