@@ -13,6 +13,13 @@ router.get('/todo/:id', function(req, res) {
   });
 });
 
+router.get('/todos', function(req, res) {
+  Todo.find({}, function(err, todo) {
+    if(err) res.send(error);
+    else    res.send(todo);
+  });
+});
+
 router.post('/todo', function(req, res) {
   var todo = req.body;
   console.log('todo: ', todo);
