@@ -4,17 +4,17 @@ var mongoose = require('mongoose');
 var ObjectId = mongoose.Types.ObjectId;
 var Todo = require('../models/todo');
 
-router.get('/todo/:id', function(req, res) {
-  var todoId = req.params.id;
-  console.log('todoId: ', todoId);
-  Todo.findOne(todoId, function(err, todo) {
+router.get('/todo/all', function(req, res) {
+  Todo.find({}, function(err, todo) {
     if(err) res.send(error);
     else    res.send(todo);
   });
 });
 
-router.get('/todos', function(req, res) {
-  Todo.find({}, function(err, todo) {
+router.get('/todo/:id', function(req, res) {
+  var todoId = req.params.id;
+  console.log('todoId: ', todoId);
+  Todo.findOne(todoId, function(err, todo) {
     if(err) res.send(error);
     else    res.send(todo);
   });
