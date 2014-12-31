@@ -1,12 +1,27 @@
 var express = require('express');
 var router = express.Router();
+var request = require('request');
 var Todo = require('../models/todo');
+var validateTokenUrl = 'http://accounts.productiv.me/api/token/validate';
 
 function auth(req, res, next) {
-  console.log(req.cookies);
-  var uid = req.cookies['productiv-uid'];
-  var token = req.cookies['productiv-token'];
+  var uid = req.cookies['productivUid'];
+  var token = req.cookies['productivToken'];
+  console.log('uid: ', uid);
+  console.log('token: ', token);
   if(!(uid && token)) res.redirect('/login');
+
+  request.post(validateTokenUrl, {
+    uid: uid,
+    token: token
+  }, function (err, res, body) {
+    if(err || res.statusCode !== 200) res.send(err);
+    else if(res.success) next();
+    else {
+      console.log(res.message);
+      res.redirect('/login');
+    }
+  });
 };
 
 router.get('/', auth, function(req, res) {

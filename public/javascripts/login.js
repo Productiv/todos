@@ -28,8 +28,12 @@ $(function() {
         var message = (res && res.message) || 'unknown error';
         $('.notice').html(message);
         return;
-      } else {
+      } else if(res.token && res.uid) {
+        setCookie('productivToken', res.token);
+        setCookie('productivUid', res.uid);
         location.href = '/';
+      } else {
+        $('.notice').html('Server error. Bad token received.');
       }
     });
   });
