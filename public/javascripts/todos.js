@@ -159,7 +159,11 @@ $(function() {
     var isDone = this.checked;
     var id = $todo.attr('id');
 
-    $todo.toggleClass('done');
+    if($todo.parents('.todos').hasClass('hide-done')) {
+      $todo.fadeOut('300', function(e) {
+        $(this).toggleClass('done');
+      });
+    } else $($todo).toggleClass('done');
 
     updateTodo(id, { isDone: isDone }, function(res) {
       console.log(res);
@@ -167,7 +171,7 @@ $(function() {
         console.log(res.message);
         isDone = !isDone;
         e.target.checked = isDone;
-        isDone ? $todo.addClass('done') : $todo.removeClass('done');
+        isDone ? $todo.addClass('done').animate(300) : $todo.removeClass('done');
       }
     });
 
