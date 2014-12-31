@@ -11,14 +11,21 @@ function auth(req, res, next) {
   console.log('token: ', token);
   if(!(uid && token)) res.redirect('/login');
 
-  request.post(validateTokenUrl, {
-    uid: uid,
-    token: token
-  }, function (err, res, body) {
-    if(err || res.statusCode !== 200) res.send(err);
-    else if(res.success) next();
+  request.post({
+    url: validateTokenUrl,
+    body: {
+      uid: uid,
+      token: token
+    },
+    json: true
+  }, function (err, _res, body) {
+    console.log('err: ', err);
+    console.log('_res: ', _res);
+    console.log('body: ', body);
+    if(err || _res.statusCode !== 200) res.send(err);
+    else if(body.success) next();
     else {
-      console.log(res.message);
+      console.log('message: ', body.message);
       res.redirect('/login');
     }
   });
