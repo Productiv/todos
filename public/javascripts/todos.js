@@ -99,7 +99,7 @@ renderNewTodo = function(todo, callback) {
 
 updateTodo = function(id, todo, callback) {
   var url = '/api/todo/' + id;
-  $.put(url, todo, callback);
+  $.put(url, { data: JSON.stringify(todo) }, callback);
 };
 
 deleteTodo = function(id, callback) {
@@ -155,13 +155,14 @@ $(function() {
 
     $todo.toggleClass('done');
 
-    updateTodo(id, { isDone: isDone }, function(res, success) {
-      if(!success) {
+    updateTodo(id, { isDone: isDone }, function(res) {
+      console.log(res);
+      if(!res.success) {
         console.log(res.message);
         isDone = !isDone;
         e.target.checked = isDone;
         isDone ? $todo.addClass('done') : $todo.removeClass('done');
-      } else console.log(res);
+      }
     });
 
     $todo.children('.title-input').focus();
