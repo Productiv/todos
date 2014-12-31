@@ -5,10 +5,11 @@ var Todo = require('../models/todo');
 function auth(req, res, next) {
   var uid = req.cookies['productiv-uid'];
   var token = req.cookies['productiv-token'];
-  if(!(uid || token)) res.redirect('/login');
+  if(!(uid && token)) res.redirect('/login');
 };
 
 router.get('/', auth, function(req, res) {
+  console.log(req.cookies);
   var uid = req.cookies.uid;
   console.log('uid: ', uid);
   Todo.find({ owner: uid }, function(err, todos) {
