@@ -1,14 +1,17 @@
 extends layout
 
+block stylesheets
+  link(rel='stylesheet', href='/stylesheets/todos.css')
+
 block content
-  h1 todos
-  input.add-todo(type="text", placeholder="new todo")
-  div.todos
-    - console.log('todos: ', todos);
-    each todo in todos
-      span.todo
-        = todo.title
-        input(type="checkbox", checked="#{todo.done}")
+  .row
+    .col-md-4.col-md-offset-4
+      h1.header #{user.name}'s todos
+      input.add-todo(type="text", placeholder="new todo")
+      .todos
+        - console.log('todos: ', todos);
+        each todo in todos
+          include todo
 
 block javascripts
   script(src="/javascripts/todos.js")

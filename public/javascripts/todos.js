@@ -1,3 +1,8 @@
+
+function addTodo(todo) {
+  $('.todos').prepend(todo);
+};
+
 $(function() {
   $('.add-todo').keydown(function(e) {
     if(e.which !== 13) {
@@ -5,13 +10,22 @@ $(function() {
     }
 
     var title = $(this).val();
-    var uid = getCookie('uid');
+    var uid = getCookie('productivUid');
     console.log(title);
     console.log(uid);
 
-    // $.post('todos.productiv.me/api/todo', {
-    //   owner: uid,
-    //   title: title
-    // });
+    $.post('/api/todo', {
+      data: JSON.stringify({
+        todo: {
+          owner: uid,
+          title: title
+        },
+        render: true
+      })
+    }, function(res, success) {
+      console.log('res: ', res);
+      if(!success) console.log(res.message);
+      else addTodo(res);
+    });
   })
 });

@@ -8,8 +8,6 @@ var mongoose = require('mongoose');
 var cors = require('cors')
 
 var config = require('./config');
-var routes = require('./routes/index');
-var api = require('./routes/todos');
 
 var app = express();
 
@@ -29,8 +27,7 @@ app.use(cookieParser());
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
-app.use('/api', api);
+require('./routes')(app);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

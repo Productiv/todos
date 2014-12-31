@@ -5,7 +5,8 @@ var ObjectId     = mongoose.Schema.Types.ObjectId;
 var TodoSchema = new Schema({
   owner: ObjectId,
   title: String,
-  done: Boolean
+  done: Boolean,
+  createdAt: Date
 });
 
 module.exports = mongoose.model('Todo', TodoSchema);
