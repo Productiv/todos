@@ -3,6 +3,7 @@
   text-decoration: line-through;
 }
 
-.todo .title {
+.todo .title,
+.todo .title-input {
   margin-left: 20px;
 }
