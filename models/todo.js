@@ -5,7 +5,7 @@ var ObjectId     = mongoose.Schema.Types.ObjectId;
 var TodoSchema = new Schema({
   owner: ObjectId,
   title: String,
-  done: Boolean,
+  isDone: Boolean,
   createdAt: Date
 });
 

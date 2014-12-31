@@ -48,7 +48,7 @@ router.post('/todo', function(req, res, next) {
   var data = JSON.parse(body.data);
   console.log('data: ', data);
   var todo = data.todo;
-  todo.done = false;
+  todo.isDone = false;
   todo.createdAt = new Date();
   console.log('todo: ', todo);
   Todo.create(todo, function(err, todo) {
