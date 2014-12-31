@@ -5,6 +5,7 @@ onClickTitle = function(e) {
   $todo.data('title', title);
   $(this).remove();
   $todo.append('<input class="title-input" type="text"/>');
+  $todo.attr('draggable', false);
 
   var $input = $todo.children('.title-input');
   $input.keydown(onKeydownTitle)
@@ -53,6 +54,7 @@ renderTitle = function($todo, title) {
   $todo.children('.title-input').remove();
   $todo.append('<span class="title">' + title + '</span>');
   $todo.children('.title').click(onClickTitle);
+  $todo.attr('draggable', true);
 };
 
 removeTodo = function(e) {
@@ -206,7 +208,8 @@ $(function() {
   $('.todo .title').click(onClickTitle);
 
   $('.sortable').sortable({
-    forcePlaceholderSize: true
+    forcePlaceholderSize: true,
+    items: ':not(.disabled)'
   }).bind('sortupdate', setTodoOrder);
 
   $('.logout').click(logout(function(res) {
