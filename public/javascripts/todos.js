@@ -4,9 +4,12 @@ onClickTitle = function(e) {
   var $todo = $(this).parent('.todo');
   $todo.data('title', title);
   $(this).remove();
-  $todo.append('<input class="title-input" type="text" value="' + title + '"/>');
+  $todo.append('<input class="title-input" type="text"/>');
+
   var $input = $todo.children('.title-input');
-  $input.keydown(onKeydownTitle).focus();
+  $input.keydown(onKeydownTitle)
+        .val(title)
+        .focus();
 
   // Move cursor to end of input
   var tmpStr = $input.val();
@@ -51,7 +54,7 @@ onKeydownTitle = function(e) {
     e.preventDefault();
     var $todo = $(this).parent('.todo');
     var title = $(this).val();
-    restoreTitle($todo, title);
+    renderTitle($todo, title);
     updateTodo($todo.attr('id'), { title: title }, function(res, success) {
       console.log('update title res: ', res);
     });
