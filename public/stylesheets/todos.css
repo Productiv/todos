@@ -1,4 +1,8 @@
 
+.action-bar {
+  margin-bottom: 10px;
+}
+
 .header .btn {
   margin-top: 24px;
 }
@@ -13,6 +17,10 @@
   margin-left: 0;
 }
 
+.todos.hide-done .todo.done {
+  display: none;
+}
+
 .todo {
   padding-left: 0;
   margin-left: 0;
@@ -22,7 +30,14 @@
   text-decoration: line-through;
 }
 
+.todo .check {
+  margin-left: 10px;
+  position: relative;
+  vertical-align: middle;
+  bottom: 3px;
+}
+
 .todo .title,
 .todo .title-input {
-  margin-left: 20px;
+  margin-left: 10px;
 }

@@ -12,9 +12,10 @@ block content
         .col-md-3
           a.logout.btn.btn-default Logout
       .action-bar
-        input.add-todo(type="text", placeholder="new todo")
+        a.show-done.btn.btn-xs.btn-default Show Done
         span.notice
-      ul.todos.sortable
+      input.add-todo(type="text", placeholder="new todo")
+      ul.todos.sortable.hide-done
         each todo in todos
           include todo
 

@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 var ObjectId = mongoose.Types.ObjectId;
 var Todo = require('../models/todo');
 
-handleError = function(callback) {
+handleError = function(res, callback) {
   return function(err, arg) {
     if(err) res.send({ success: false, message: err });
     else callback(arg);
@@ -13,7 +13,7 @@ handleError = function(callback) {
 
 todoById = function(req, res, next) {
   var id = req.todoId || req.params.id;
-  Todo.findOne({ _id: id }, handleError(function(todo) {
+  Todo.findOne({ _id: id }, handleError(res, function(todo) {
     req.todo = todo;
     next();
   }));
@@ -21,21 +21,20 @@ todoById = function(req, res, next) {
 
 todosByOwner = function(req, res, next) {
   var id = req.ownerId || req.userId || req.params.uid;
-  Todo.find({ owner: id }, handleError(function(todos) {
+  Todo.find({ owner: id }, handleError(res, function(todos) {
     req.todos = todos;
     next();
   }));
 };
 
 sendUserTodos = function(req, res) {
-  Todo.find({ owner: req.uid }, function(err, todos) {
-    if(err) res.send(err);
-    else    res.send(todos);
-  });
+  Todo.find({ owner: req.uid }, handleError(res, function(todos) {
+    res.send(todos);
+  }));
 };
 
 createTodo = function(req, res, next) {
-  Todo.create(req.todo, handleError(function(newTodo) {
+  Todo.create(req.todo, handleError(res, function(newTodo) {
     console.log('created newTodo: ', newTodo);
     req.todo = newTodo;
     next();
@@ -43,7 +42,7 @@ createTodo = function(req, res, next) {
 };
 
 renderTodo = function(req, res) {
-  res.render('todo', { todo: req.todo }, handleError(function(html) {
+  res.render('todo', { todo: req.todo }, handleError(res, function(html) {
     res.send({ success: true, data: html });
   }));
 };
@@ -91,7 +90,7 @@ router.put('/todo/:id', function(req, res, next) {
   var todo = parseJson(req.body.data, { verbose: true });
   console.log('todoId: ', todoId);
   console.log('todo: ', todo);
-  Todo.findOneAndUpdate({ _id: todoId }, todo, handleError(function(newTodo) {
+  Todo.findOneAndUpdate({ _id: todoId }, todo, handleError(res, function(newTodo) {
     req.todo = newTodo;
     next();
   }));
@@ -100,7 +99,7 @@ router.put('/todo/:id', function(req, res, next) {
 router.delete('/todo/:id', function(req, res) {
   var todoId = req.params.id;
   console.log('todoId: ', todoId);
-  Todo.remove({ _id: todoId }, handleError(function() {
+  Todo.remove({ _id: todoId }, handleError(res, function() {
     res.send({ success: true });
   }));
 });
@@ -110,7 +109,7 @@ router.get('/todos/:uid', todosByOwner, function(req, res) {
 });
 
 router.get('/todo/all', function(req, res) {
-  Todo.find({}, handleError(function(todos) {
+  Todo.find({}, handleError(res, function(todos) {
     res.send(todos);
   }));
 });

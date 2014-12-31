@@ -142,6 +142,7 @@ $(function() {
         var $todo = $('.todos').children('.todo').first();
         $todo.children('.title').click(onClickTitle);
         setTodoOrder();
+        $('.sortable').sortable('reload');
       }
     });
   });
@@ -174,8 +175,13 @@ $(function() {
     forcePlaceholderSize: true
   }).bind('sortupdate', setTodoOrder);
 
-  $('.logout').click(logout(function(res, success) {
-    if(!success) console.log(res);
+  $('.logout').click(logout(function(res) {
+    if(!res.success) console.log(res);
     else location.href = '/login';
   }));
+
+  $('.show-done').click(function(e) {
+    $(this).toggleClass('active');
+    $('.todos').toggleClass('hide-done');
+  });
 });
