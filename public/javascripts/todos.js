@@ -4,13 +4,38 @@ function onClickTitle(e) {
   var $todo = $(this).parent('.todo');
   $(this).remove();
   $todo.append('<input class="title-input" type="text" value="' + title + '"/>');
-  $todo.children('.title-input').keydown(onSubmitTitle);
+  var $input = $todo.children('.title-input');
+  $input.keydown(onSubmitTitle).focus();
+  var tmpStr = $input.val();
+  $input.val('');
+  $input.val(tmpStr);
+};
+
+reloadTodo = function(id) {
+  $todo = $('#'+id);
+  getTodo(id, function(res, success) {
+    if(!success) console.log(res);
+    $todo.replaceWith(res);
+  })
+}
+
+showUndo = function(message, action, undoAction) {
+  $('.notice').html(message + '<a class="undo" href="#"> Undo </a>').fadeIn(0);
+
+  setTimeout(function() { $('.notice').fadeOut(1000); }, 2000);
+  window.undo_timeout = setTimeout(action, 3000);
+
+  $('.undo').click(function(e) {
+    e.preventDefault();
+    $('.notice').fadeOut(0);
+    clearTimeout(window.undo_timeout);
+    undoAction();
+  });
 };
 
 onSubmitTitle = function(e) {
   if(e.which === 13) {
     e.preventDefault();
-    console.log('test');
     var title = $(this).val();
     var $todo = $(this).parent('.todo');
     $(this).remove();
@@ -20,15 +45,32 @@ onSubmitTitle = function(e) {
       console.log('update title res: ', res);
     });
   } else if(e.which === 8 && $(this).val() === '') {
+    e.preventDefault();
     var $todo = $(this).parent('.todo');
-    deleteTodo($todo.attr('id'), function(res, success) {
-      console.log(res);
+    $todo.hide();
+    showUndo('Task Deleted', function() {
       $todo.remove();
+      deleteTodo($todo.attr('id'), function(res, success) {
+        console.log(res);
+      });
+    }, function() {
+      reloadTodo($todo.attr('id'));
+      $todo.show();
     });
   }
 };
 
-renderTodo = function(todo, callback) {
+getTodo = function(id, callback) {
+  var url = '/api/todo/' + id;
+  $.get(url, callback);
+};
+
+renderTodo = function(id, callback) {
+  var url = '/api/todo/' + id;
+  $.get(url, { render: true }, callback);
+};
+
+renderNewTodo = function(todo, callback) {
   var data = JSON.stringify({
     todo: todo,
     render: true
@@ -46,18 +88,23 @@ deleteTodo = function(id, callback) {
   $.delete(url, callback);
 };
 
+reorderTodos = function(ids, callback) {
+  $.post('/api/todo/reorder', { data: JSON.stringify(ids) }, callback);
+};
+
+setTodoOrder = function() {
+  var ids = $.map($('.todo'), function(todo) { return $(todo).attr('id'); });
+  reorderTodos(ids, function(res) { console.log(res); });
+};
+
 $(function() {
   $('.add-todo').keydown(function(e) {
-    if(e.which !== 13) {
-      return;
-    }
+    if(e.which !== 13) return;
 
     var title = $(this).val();
     var uid = getCookie('productivUid');
-    console.log(title);
-    console.log(uid);
 
-    renderTodo({ title: title, owner: uid }, function(res, success) {
+    renderNewTodo({ title: title, owner: uid }, function(res, success) {
       console.log('res: ', res);
       if(!success) console.log(res.message);
       else {
@@ -65,13 +112,18 @@ $(function() {
         $('.add-todo').val('');
         var $todo = $('.todos').children('.todo').first();
         $todo.children('.title').click(onClickTitle);
+        setTodoOrder();
       }
     });
   });
 
-  $('.todo .check').change(function(e) {
+  $('.todo .check').click(function(e) {
+    e.stopPropagation();
+  }).change(function(e) {
     e.preventDefault();
 
+    var $focused = $(document.activeElement);
+    console.log($focused);
     var $todo = $(this).parent('.todo');
     var isDone = this.checked;
     var id = $todo.attr('id');
@@ -85,8 +137,14 @@ $(function() {
         e.target.checked = isDone;
         isDone ? $todo.addClass('done') : $todo.removeClass('done');
       } else console.log(res);
+
+      console.log($focused);
     });
   });
 
   $('.todo .title').click(onClickTitle);
+
+  $('.sortable').sortable({
+    forcePlaceholderSize: true
+  }).bind('sortupdate', setTodoOrder);
 });

@@ -6,7 +6,8 @@ var TodoSchema = new Schema({
   owner: ObjectId,
   title: String,
   isDone: Boolean,
-  createdAt: Date
+  createdAt: Date,
+  index: Number
 });
 
 module.exports = mongoose.model('Todo', TodoSchema);

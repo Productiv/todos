@@ -1,4 +1,4 @@
 
-.todo(id=todo._id, class="#{todo.isDone ? 'done' : ''}")
+li.todo(id=todo._id, class="#{todo.isDone ? 'done' : ''}")
   input.check(type="checkbox", checked=todo.isDone)
   span.title= todo.title

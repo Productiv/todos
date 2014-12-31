@@ -7,9 +7,10 @@ block content
   .row
     .col-md-4.col-md-offset-4
       h1.header #{user.name}'s todos
-      input.add-todo(type="text", placeholder="new todo")
-      .todos
-        - console.log('todos: ', todos);
+      .action-bar
+        input.add-todo(type="text", placeholder="new todo")
+        span.notice
+      ul.todos.sortable
         each todo in todos
           include todo
 

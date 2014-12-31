@@ -26,7 +26,10 @@ router.get('/todo/:id', function(req, res, next) {
   req.todoId = req.params.id;
   console.log('todoId: ', req.todoId);
   next();
-}, findOneTodo, function(req, res, next) { res.send(req.todo) });
+}, findOneTodo, function(req, res, next) {
+  if(req.render) res.render('todo', { todo: req.todo });
+  else           res.send(req.todo);
+});
 
 sendUserTodos = function(req, res) {
   Todo.find({ owner: req.uid }, function(err, todos) {
@@ -63,6 +66,19 @@ router.post('/todo', function(req, res, next) {
     }
   });
 }, function(req, res) { res.render('todo', { todo: req.todo })});
+
+router.post('/todo/reorder', function(req, res, next) {
+  var body = req.body;
+  console.log('body: ', body);
+  var ids = JSON.parse(body.data);
+  console.log('ids: ', ids);
+  ids.map(function(id, i) {
+    Todo.findOneAndUpdate({ _id: id }, { index: i+1 }, function(err) {
+      if(err) res.send({ success: false, error: err });
+    });
+  });
+  res.send({ message: "reordering todos" });
+});
 
 router.put('/todo/:id', function(req, res) {
   var todoId = req.params.id;

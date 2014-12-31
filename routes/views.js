@@ -74,7 +74,14 @@ sortTodosByMostRecent = function(req, res, next) {
   next();
 };
 
-router.get('/', auth, getUser, todosByOwner, sortTodosByMostRecent,
+sortTodosByIndex = function(req, res, next) {
+  req.todos = sort(req.todos, function(first, second) {
+    return first.index - second.index;
+  });
+  next();
+};
+
+router.get('/', auth, getUser, todosByOwner, sortTodosByIndex,
   function(req, res) {
     res.render('todos', {
       todos: req.todos,

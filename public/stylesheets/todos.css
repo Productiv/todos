@@ -1,4 +1,19 @@
 
+.notice {
+  margin-left: 20px;
+}
+
+.todos {
+  list-style-type: none;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.todo {
+  padding-left: 0;
+  margin-left: 0;
+}
+
 .todo.done {
   text-decoration: line-through;
 }
