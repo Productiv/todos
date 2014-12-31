@@ -1,1 +1,0 @@
-git aa; git cam "$1"; gp; gp heroku master
