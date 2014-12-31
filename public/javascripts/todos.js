@@ -30,11 +30,17 @@ showUndo = function(message, action, undoAction) {
                     '<a class="undo" href="#"> Undo </a>')
   $('.notice').fadeIn(0);
 
+  // Could cause race conditions, etc.
   setTimeout(function() { $('.notice').fadeOut(2000); }, 3000);
-  window.undo_timeout = setTimeout(action, 5000);
+  window.onbeforeunload = action;
+  window.undo_timeout = setTimeout(function() {
+    action();
+    window.onbeforeunload = null;
+  }, 5000);
 
   $('.undo').click(function(e) {
     e.preventDefault();
+    window.onbeforeunload = null
     $('.notice').stop().fadeOut(0);
     clearTimeout(window.undo_timeout);
     undoAction();
