@@ -1,7 +1,7 @@
 
 onClickTitle = function(e) {
   var title = $(this).html();
-  var $todo = $(this).parent('.todo');
+  var $todo = $(this).parents('.todo');
   $todo.data('title', title);
   $(this).remove();
   $todo.append('<input class="title-input" type="text"/>');
@@ -22,7 +22,7 @@ reloadTodo = function(id) {
   getTodo(id, function(res, success) {
     if(!success) console.log(res);
     $todo.replaceWith(res);
-  })
+  });
 }
 
 showUndo = function(message, action, undoAction) {
@@ -49,12 +49,26 @@ renderTitle = function($todo, title) {
   $todo.children('.title').click(onClickTitle);
 };
 
+removeTodo = function(e) {
+  e.preventDefault();
+  var $todo = $(this).parents('.todo');
+  $todo.hide();
+  showUndo('Task Deleted', function() {
+    $todo.remove();
+    deleteTodo($todo.attr('id'), function(res) {
+      console.log(res);
+    });
+  }, function() {
+    $todo.show();
+  });
+};
+
 onKeydownTitle = function(e) {
 
   // Press Enter
   if(e.which === 13) {
     e.preventDefault();
-    var $todo = $(this).parent('.todo');
+    var $todo = $(this).parents('.todo');
     var title = $(this).val();
     renderTitle($todo, title);
     updateTodo($todo.attr('id'), { title: title }, function(res, success) {
@@ -64,22 +78,12 @@ onKeydownTitle = function(e) {
 
   // Press Backspace when input is empty
   if(e.which === 8 && $(this).val() === '') {
-    e.preventDefault();
-    var $todo = $(this).parent('.todo');
-    $todo.hide();
-    showUndo('Task Deleted', function() {
-      $todo.remove();
-      deleteTodo($todo.attr('id'), function(res, success) {
-        console.log(res);
-      });
-    }, function() {
-      renderTitle($todo);
-      $todo.show();
-    });
+    removeTodo.call(this, e);
+    renderTitle($(this).parents('.todo'));
   }
 
   if(e.which === 27) {
-    renderTitle($(this).parent('.todo'));
+    renderTitle($(this).parents('.todo'));
   }
 };
 
@@ -141,6 +145,7 @@ $(function() {
         $('.add-todo').val('');
         var $todo = $('.todos').children('.todo').first();
         $todo.children('.title').click(onClickTitle);
+        $todo.children('.remove').click(removeTodo);
         setTodoOrder();
         $('.sortable').sortable('reload');
       }
@@ -150,7 +155,7 @@ $(function() {
   $('.todo .check').change(function(e) {
     e.preventDefault();
 
-    var $todo = $(this).parent('.todo');
+    var $todo = $(this).parents('.todo');
     var isDone = this.checked;
     var id = $todo.attr('id');
 
@@ -184,4 +189,6 @@ $(function() {
     $(this).toggleClass('active');
     $('.todos').toggleClass('hide-done');
   });
+
+  $('.todo .remove').click(removeTodo);
 });

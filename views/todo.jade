@@ -1,6 +1,7 @@
 
 li.todo(id=todo._id, class="#{todo.isDone ? 'done' : ''}")
-  i.fa.fa-remove.fa-1
+  span.remove
+    i.fa.fa-remove.fa-1
   span.check-container
     input.check(type="checkbox", checked=todo.isDone)
   span.title= todo.title
