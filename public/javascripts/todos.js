@@ -57,8 +57,11 @@ renderTitle = function($todo, title) {
 
 removeTodo = function(e) {
   e.preventDefault();
+
   var $todo = $(this).parents('.todo');
   $todo.hide();
+  if($todo.children('.title-input')) renderTitle($todo);
+
   showUndo('Task Deleted', function() {
     $todo.remove();
     deleteTodo($todo.attr('id'), function(res) {
@@ -83,10 +86,10 @@ onKeydownTitle = function(e) {
   }
 
   // Press Backspace when input is empty
-  if(e.which === 8 && $(this).val() === '') {
-    removeTodo.call(this, e);
-    renderTitle($(this).parents('.todo'));
-  }
+  // if(e.which === 8 && $(this).val() === '') {
+  //   removeTodo.call(this, e);
+  //   renderTitle($(this).parents('.todo'));
+  // }
 
   if(e.which === 27) {
     renderTitle($(this).parents('.todo'));
