@@ -136,7 +136,23 @@ logout = function(callback) {
   };
 };
 
+toggleShowDone = function(show) {
+  if(show == undefined) {
+    $('.show-done').toggleClass('active');
+    $('.todos').toggleClass('hide-done');
+  } else if(show) {
+    $('.show-done').addClass('active');
+    $('.todos').removeClass('hide-done');
+  } else {
+    $('.show-done').removeClass('active');
+    $('.todos').addClass('hide-done');
+  }
+};
+
 $(function() {
+  // Load settings from cookie
+  if(getCookie('productivShowDone') === 'true') toggleShowDone(true);
+
   $('.add-todo').keydown(function(e) {
     if(e.which !== 13) return;
 
@@ -196,8 +212,10 @@ $(function() {
   }));
 
   $('.show-done').click(function(e) {
-    $(this).toggleClass('active');
-    $('.todos').toggleClass('hide-done');
+    toggleShowDone();
+    var show = getCookie('productivShowDone');
+    if(show === 'true') setCookie('productivShowDone', 'false');
+    else setCookie('productivShowDone', 'true');
   });
 
   $('.todo .remove').click(removeTodo);
