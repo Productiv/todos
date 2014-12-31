@@ -1,11 +1,14 @@
 
-function onClickTitle(e) {
+onClickTitle = function(e) {
   var title = $(this).html();
   var $todo = $(this).parent('.todo');
+  $todo.data('title', title);
   $(this).remove();
   $todo.append('<input class="title-input" type="text" value="' + title + '"/>');
   var $input = $todo.children('.title-input');
-  $input.keydown(onSubmitTitle).focus();
+  $input.keydown(onKeydownTitle).focus();
+
+  // Move cursor to end of input
   var tmpStr = $input.val();
   $input.val('');
   $input.val(tmpStr);
@@ -33,18 +36,29 @@ showUndo = function(message, action, undoAction) {
   });
 };
 
-onSubmitTitle = function(e) {
+renderTitle = function($todo, title) {
+  var title = title || $todo.data('title');
+  $todo.data('title', '');
+  $todo.children('.title-input').remove();
+  $todo.append('<span class="title">' + title + '</span>');
+  $todo.children('.title').click(onClickTitle);
+};
+
+onKeydownTitle = function(e) {
+
+  // Press Enter
   if(e.which === 13) {
     e.preventDefault();
-    var title = $(this).val();
     var $todo = $(this).parent('.todo');
-    $(this).remove();
-    $todo.append('<span class="title">' + title + '</span>');
-    $todo.children('.title').click(onClickTitle);
+    var title = $(this).val();
+    restoreTitle($todo, title);
     updateTodo($todo.attr('id'), { title: title }, function(res, success) {
       console.log('update title res: ', res);
     });
-  } else if(e.which === 8 && $(this).val() === '') {
+  }
+
+  // Press Backspace when input is empty
+  if(e.which === 8 && $(this).val() === '') {
     e.preventDefault();
     var $todo = $(this).parent('.todo');
     $todo.hide();
@@ -54,9 +68,13 @@ onSubmitTitle = function(e) {
         console.log(res);
       });
     }, function() {
-      reloadTodo($todo.attr('id'));
+      renderTitle($todo);
       $todo.show();
     });
+  }
+
+  if(e.which === 27) {
+    renderTitle($(this).parent('.todo'));
   }
 };
 

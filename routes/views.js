@@ -2,15 +2,13 @@ var express = require('express');
 var router = express.Router();
 var request = require('request');
 var Todo = require('../models/todo');
-var validateTokenUrl = 'http://accounts.productiv.me/api/token/validate';
-var getUserUrl = 'http://accounts.productiv.me/api/user/'
+var accountsUrl = 'http://accounts.productiv.me/api';
 
 function getUser(req, res, next) {
   var uid = req.cookies['productivUid'];
   if(!uid) next();
-  console.log('getUser uid: ', uid);
-  request(getUserUrl + uid, function (err, _res, user) {
-    console.log('user: ', user);
+  var url = accountsUrl + '/user/' + uid;
+  request(url, function (err, _res, user) {
     if(err || _res.statusCode !== 200) {
       console.log('error retrieving user: ', err);
       console.log('status code: ', _res.statusCode);
@@ -23,22 +21,24 @@ function getUser(req, res, next) {
   });
 };
 
-function auth(req, res, next) {
-  var uid = req.cookies['productivUid'];
-  var token = req.cookies['productivToken'];
-  console.log('uid: ', uid);
-  console.log('token: ', token);
-  if(!(uid && token)) res.redirect('/login');
-
+validateToken = function(uid, token, next) {
   request.post({
-    url: validateTokenUrl,
+    url: accountsUrl + '/token/validate',
     body: {
       uid: uid,
       token: token
     },
     json: true
-  }, function (err, _res, body) {
-    console.log('body: ', body);
+  }, next);
+};
+
+function auth(req, res, next) {
+  var uid = req.cookies['productivUid'];
+  var token = req.cookies['productivToken'];
+
+  if(!(uid && token)) res.redirect('/login');
+
+  validateToken(uid, token, function (err, _res, body) {
     if(err || _res.statusCode !== 200) res.send(err);
     else if(body.success) next();
     else {
