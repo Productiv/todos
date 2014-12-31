@@ -4,7 +4,7 @@ var request = require('request');
 var Todo = require('../models/todo');
 var accountsUrl = 'http://accounts.productiv.me/api';
 
-function getUser(req, res, next) {
+getUser = function(req, res, next) {
   var uid = req.cookies['productivUid'];
   if(!uid) next();
   var url = accountsUrl + '/user/' + uid;
@@ -32,7 +32,7 @@ validateToken = function(uid, token, next) {
   }, next);
 };
 
-function auth(req, res, next) {
+auth = function(req, res, next) {
   var uid = req.cookies['productivUid'];
   var token = req.cookies['productivToken'];
 
@@ -89,9 +89,7 @@ router.get('/', auth, getUser, todosByOwner, sortTodosByIndex,
     });
   });
 
-router.get('/todo/:id', findOneTodo, function(req, res) {
-  res.render('todo', { todo: req.todo });
-});
+router.get('/todo/:id', todoById, renderTodo);
 
 router.get('/login', function(req, res) {
   res.render('login');

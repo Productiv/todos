@@ -26,14 +26,16 @@ reloadTodo = function(id) {
 }
 
 showUndo = function(message, action, undoAction) {
-  $('.notice').html(message + '<a class="undo" href="#"> Undo </a>').fadeIn(0);
+  $('.notice').html('<span class="message">' + message + '</span> ' +
+                    '<a class="undo" href="#"> Undo </a>')
+  $('.notice').fadeIn(0);
 
-  setTimeout(function() { $('.notice').fadeOut(1000); }, 2000);
-  window.undo_timeout = setTimeout(action, 3000);
+  setTimeout(function() { $('.notice').fadeOut(2000); }, 3000);
+  window.undo_timeout = setTimeout(action, 5000);
 
   $('.undo').click(function(e) {
     e.preventDefault();
-    $('.notice').fadeOut(0);
+    $('.notice').stop().fadeOut(0);
     clearTimeout(window.undo_timeout);
     undoAction();
   });
@@ -92,11 +94,7 @@ renderTodo = function(id, callback) {
 };
 
 renderNewTodo = function(todo, callback) {
-  var data = JSON.stringify({
-    todo: todo,
-    render: true
-  });
-  $.post('/api/todo', { data: data }, callback);
+  $.post('/api/todo', { data: JSON.stringify(todo), render: true }, callback);
 };
 
 updateTodo = function(id, todo, callback) {
@@ -118,6 +116,16 @@ setTodoOrder = function() {
   reorderTodos(ids, function(res) { console.log(res); });
 };
 
+logout = function(callback) {
+  return function(e) {
+    e.preventDefault();
+    var uid = getCookie('productivUid');
+    $.post('http://accounts.productiv.me/api/logout', {
+      uid: uid
+    }, callback);
+  };
+};
+
 $(function() {
   $('.add-todo').keydown(function(e) {
     if(e.which !== 13) return;
@@ -125,11 +133,11 @@ $(function() {
     var title = $(this).val();
     var uid = getCookie('productivUid');
 
-    renderNewTodo({ title: title, owner: uid }, function(res, success) {
+    renderNewTodo({ title: title, owner: uid }, function(res) {
       console.log('res: ', res);
-      if(!success) console.log(res.message);
+      if(!res.success) console.log(res.message);
       else {
-        $('.todos').prepend(res);
+        $('.todos').prepend(res.data);
         $('.add-todo').val('');
         var $todo = $('.todos').children('.todo').first();
         $todo.children('.title').click(onClickTitle);
@@ -138,13 +146,9 @@ $(function() {
     });
   });
 
-  $('.todo .check').click(function(e) {
-    e.stopPropagation();
-  }).change(function(e) {
+  $('.todo .check').change(function(e) {
     e.preventDefault();
 
-    var $focused = $(document.activeElement);
-    console.log($focused);
     var $todo = $(this).parent('.todo');
     var isDone = this.checked;
     var id = $todo.attr('id');
@@ -158,9 +162,9 @@ $(function() {
         e.target.checked = isDone;
         isDone ? $todo.addClass('done') : $todo.removeClass('done');
       } else console.log(res);
-
-      console.log($focused);
     });
+
+    $todo.children('.title-input').focus();
   });
 
   $('.todo .title').click(onClickTitle);
@@ -168,4 +172,9 @@ $(function() {
   $('.sortable').sortable({
     forcePlaceholderSize: true
   }).bind('sortupdate', setTodoOrder);
+
+  $('.logout').click(logout(function(res, success) {
+    if(!success) console.log(res);
+    else location.href = '/login';
+  }));
 });
