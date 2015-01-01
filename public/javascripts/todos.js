@@ -88,7 +88,7 @@ submitTitle = function(e) {
 onKeydownTitle = function(e) {
 
   // Press Enter
-  if(e.which === 13) submitTitle.call(this);
+  if(e.which === 13) submitTitle.call(this, e);
 
   if(e.which === 27) {
     renderTitle($(this).parents('.todo'));
