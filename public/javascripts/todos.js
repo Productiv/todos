@@ -212,12 +212,19 @@ $(function() {
     else location.href = '/login';
   }));
 
+  swapDataAlt = function(e) {
+    var alt = $(this).data('alt');
+    $(this).data('alt', $(this).html())
+    $(this).html(alt);
+  };
+
   $('.show-done').click(function(e) {
     toggleShowDone();
+    swapDataAlt.call(this, e);
     var show = getCookie('productivShowDone');
     if(show === 'true') setCookie('productivShowDone', 'false');
     else setCookie('productivShowDone', 'true');
-  });
+  }).hover(swapDataAlt, swapDataAlt);
 
   $('.todo .remove').click(removeTodo);
 });
