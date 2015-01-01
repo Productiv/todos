@@ -10,7 +10,8 @@ onClickTitle = function(e) {
   var $input = $todo.children('.title-input');
   $input.keydown(onKeydownTitle)
         .val(title)
-        .focus();
+        .focus()
+        .focusout(submitTitle);
 
   // Move cursor to end of input
   var tmpStr = $input.val();
@@ -74,18 +75,20 @@ removeTodo = function(e) {
   });
 };
 
+submitTitle = function(e) {
+  e.preventDefault();
+  var $todo = $(this).parents('.todo');
+  var title = $(this).val();
+  renderTitle($todo, title);
+  updateTodo($todo.attr('id'), { title: title }, function(res, success) {
+    console.log('update title res: ', res);
+  });
+};
+
 onKeydownTitle = function(e) {
 
   // Press Enter
-  if(e.which === 13) {
-    e.preventDefault();
-    var $todo = $(this).parents('.todo');
-    var title = $(this).val();
-    renderTitle($todo, title);
-    updateTodo($todo.attr('id'), { title: title }, function(res, success) {
-      console.log('update title res: ', res);
-    });
-  }
+  if(e.which === 13) submitTitle.call(this);
 
   // Press Backspace when input is empty
   // if(e.which === 8 && $(this).val() === '') {
