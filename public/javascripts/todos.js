@@ -139,22 +139,19 @@ logout = function(callback) {
   };
 };
 
-toggleShowDone = function(show) {
-  if(show == undefined) {
-    $('.show-done').toggleClass('active');
-    $('.todos').toggleClass('hide-done');
-  } else if(show) {
-    $('.show-done').addClass('active');
+setShowDone = function(show) {
+  if(getCookie('productivShowDone') === 'true') {
+    $('.show-done').addClass('active').html('Done: Show');
     $('.todos').removeClass('hide-done');
   } else {
-    $('.show-done').removeClass('active');
+    $('.show-done').removeClass('active').html('Done: Hidden');
     $('.todos').addClass('hide-done');
   }
 };
 
 $(function() {
   // Load settings from cookie
-  if(getCookie('productivShowDone') === 'true') toggleShowDone(true);
+  setShowDone();
 
   $('.add-todo').keydown(function(e) {
     if(e.which !== 13) return;
@@ -212,19 +209,19 @@ $(function() {
     else location.href = '/login';
   }));
 
-  swapDataAlt = function(e) {
-    var alt = $(this).data('alt');
-    $(this).data('alt', $(this).html())
-    $(this).html(alt);
+  hoverShowDone = function(e) {
+    if(getCookie('productivShowDone') === 'true')
+      $('.show-done').html('Done: Hide');
+    else
+      $('.show-done').html('Done: Show');
   };
 
   $('.show-done').click(function(e) {
-    toggleShowDone();
-    swapDataAlt.call(this, e);
     var show = getCookie('productivShowDone');
     if(show === 'true') setCookie('productivShowDone', 'false');
     else setCookie('productivShowDone', 'true');
-  }).hover(swapDataAlt, swapDataAlt);
+    setShowDone();
+  }).hover(hoverShowDone, setShowDone);
 
   $('.todo .remove').click(removeTodo);
 });
