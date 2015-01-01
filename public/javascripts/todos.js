@@ -90,12 +90,6 @@ onKeydownTitle = function(e) {
   // Press Enter
   if(e.which === 13) submitTitle.call(this);
 
-  // Press Backspace when input is empty
-  // if(e.which === 8 && $(this).val() === '') {
-  //   removeTodo.call(this, e);
-  //   renderTitle($(this).parents('.todo'));
-  // }
-
   if(e.which === 27) {
     renderTitle($(this).parents('.todo'));
   }
@@ -191,9 +185,9 @@ $(function() {
 
     if($todo.parents('.todos').hasClass('hide-done')) {
       $todo.fadeOut('300', function(e) {
-        $(this).toggleClass('done');
+        $(this).toggleClass('done').attr('style', '');
       });
-    } else $($todo).toggleClass('done');
+    } else $todo.toggleClass('done');
 
     updateTodo(id, { isDone: isDone }, function(res) {
       console.log(res);
