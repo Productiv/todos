@@ -65,7 +65,7 @@ removeTodo = function(e) {
   $todo.hide();
   if($todo.children('.title-input')) renderTitle($todo);
 
-  showUndo('Task Deleted', function() {
+  showUndo('Task deleted.', function() {
     $todo.remove();
     deleteTodo($todo.attr('id'), function(res) {
       console.log(res);
@@ -189,14 +189,11 @@ $(function() {
       });
     } else $todo.toggleClass('done');
 
-    updateTodo(id, { isDone: isDone }, function(res) {
-      console.log(res);
-      if(!res.success) {
-        console.log(res.message);
-        isDone = !isDone;
-        e.target.checked = isDone;
-        isDone ? $todo.addClass('done').animate(300) : $todo.removeClass('done');
-      }
+    showUndo('Marked as done.', function() {
+      updateTodo(id, { isDone: isDone }, function(res) { console.log(res); });
+    }, function() {
+      $todo.find('.check').attr('checked', !isDone);
+      $todo.removeClass('done');
     });
 
     $todo.children('.title-input').focus();
