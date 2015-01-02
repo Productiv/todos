@@ -173,6 +173,7 @@ sortTodosByDone = function(dir) {
     else return 0;
   });
   $('.todos').html(items);
+  $('.sortable').sortable('reload');
 };
 
 sortTodosByIndex = function() {
@@ -181,6 +182,7 @@ sortTodosByIndex = function() {
     return a.index - b.index;
   });
   $('.todos').html(items);
+  $('.sortable').sortable('reload');
 };
 
 setShowDone = function() {
