@@ -7,6 +7,14 @@
   margin-top: 24px;
 }
 
+.todo .remove:hover {
+  cursor: pointer;
+}
+
+.add-todo {
+  margin-bottom: 10px;
+}
+
 .notice {
   margin-left: 20px;
 }
@@ -30,8 +38,11 @@
   text-decoration: line-through;
 }
 
-.todo .check {
+.todo .check-container {
   margin-left: 10px;
+}
+
+.todo .check {
   position: relative;
   vertical-align: middle;
   bottom: 3px;
