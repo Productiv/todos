@@ -1,4 +1,4 @@
 todos
 =====
 
-A simple backend to manage todo items.
+A simple, modular todo application.
