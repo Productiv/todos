@@ -32,6 +32,7 @@ onKeydownTitle = function(e) {
 
 onCheckChange = function(e) {
   e.preventDefault();
+  console.log('test');
 
   var $todo = $(this).parents('.todo');
   var isDone = this.checked;
@@ -43,7 +44,7 @@ onCheckChange = function(e) {
     });
   } else $todo.toggleClass('done');
 
-  showUndo('Marked as done.', function() {
+  showUndo('Todo completed.', function() {
     updateTodo(id, { isDone: isDone }, function(res) { console.log(res); });
   }, function() {
     $todo.find('.check').attr('checked', !isDone);
@@ -209,9 +210,10 @@ $(function() {
         $('.todos').prepend(res.data);
         $('.add-todo').val('');
         var $todo = $('.todos').children('.todo').first();
+        console.log($todo);
         $todo.children('.title').click(onClickTitle);
         $todo.children('.remove').click(removeTodo);
-        $todo.children('.check').change(onCheckChange);
+        $todo.find('.check').change(onCheckChange);
         saveTodoOrder();
         $('.sortable').sortable('reload');
       }
