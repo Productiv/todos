@@ -7,10 +7,6 @@
   margin-top: 24px;
 }
 
-.todo .remove:hover {
-  cursor: pointer;
-}
-
 .add-todo {
   margin-bottom: 10px;
 }
@@ -34,8 +30,20 @@
   margin-left: 0;
 }
 
+.todo:hover {
+  cursor: pointer;
+}
+
 .todo.done {
   text-decoration: line-through;
+}
+
+.todo .remove {
+  color: #999;
+}
+
+.todo .remove:hover {
+  color: inherit;
 }
 
 .todo .check-container {
@@ -51,4 +59,9 @@
 .todo .title,
 .todo .title-input {
   margin-left: 10px;
+}
+
+.todo .title-input {
+  display: inline;
+  width: 87.5%;
 }

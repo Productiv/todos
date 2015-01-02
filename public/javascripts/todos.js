@@ -62,8 +62,8 @@ removeTodo = function(e) {
   e.preventDefault();
 
   var $todo = $(this).parents('.todo');
-  $todo.hide();
-  if($todo.children('.title-input')) renderTitle($todo);
+  $todo.fadeOut('300');
+  if($todo.children('.title-input').length > 0) renderTitle($todo);
 
   showUndo('Task deleted.', function() {
     $todo.remove();

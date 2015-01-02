@@ -1,19 +1,25 @@
 
+function synchronize(src, dest) {
+  return function(e) {
+    $('.nav-tabs > li').removeClass('active');
+    $(dest + '-link').addClass('active');
+    $('form' + src).hide();
+    $('form' + dest).show();
+    if(dest === '.signup') $('.tab-panel').css('border-top-left-radius', '0');
+    else $('.tab-panel').css('border-top-left-radius', '');
+
+    var $src = $('form' + src);
+    var email = $src.find('input.email').val();
+    var password = $src.find('input.password').val();
+    var $dest = $('form' + dest);
+    $dest.find('input.email').val(email);
+    $dest.find('input.password').val(password);
+  }
+};
+
 $(function() {
-  $('.signup-link').click(function(e) {
-    $('.nav-tabs > li').removeClass('active');
-    $(this).addClass('active');
-    $('form.login').hide();
-    $('form.signup').show();
-    synchronize('.login', '.signup');
-  });
-  $('.login-link').click(function(e) {
-    $('.nav-tabs > li').removeClass('active');
-    $(this).addClass('active');
-    $('form.signup').hide();
-    $('form.login').show();
-    synchronize('.signup', '.login');
-  });
+  $('.signup-link').click(synchronize('.login', '.signup'));
+  $('.login-link').click(synchronize('.signup', '.login'));
   $('form.login button.login').click(function(e) {
     e.preventDefault();
     var email = $('.login .email').val();
@@ -63,12 +69,3 @@ $(function() {
 
   });
 });
-
-function synchronize(src, dest) {
-  var $src = $('form' + src);
-  var email = $src.find('input.email').val();
-  var password = $src.find('input.password').val();
-  var $dest = $('form' + dest);
-  $dest.find('input.email').val(email);
-  $dest.find('input.password').val(password);
-};
