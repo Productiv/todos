@@ -36,7 +36,7 @@ auth = function(req, res, next) {
   var uid = req.cookies['productivUid'];
   var token = req.cookies['productivToken'];
 
-  if(!uid || !token)) res.redirect('/login');
+  if(!uid || !token) res.redirect('/login');
   else {
     validateToken(uid, token, function (err, _res, body) {
       if(err || _res.statusCode !== 200) res.send(err);
