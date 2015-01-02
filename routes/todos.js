@@ -35,7 +35,6 @@ sendUserTodos = function(req, res) {
 
 createTodo = function(req, res, next) {
   Todo.create(req.todo, handleError(res, function(newTodo) {
-    console.log('created newTodo: ', newTodo);
     req.todo = newTodo;
     next();
   }));
@@ -74,11 +73,9 @@ router.post('/todo', function(req, res, next) {
   todo.isDone = false;
   todo.index = Infinity;
   todo.createdAt = new Date();
-  console.log('todo: ', todo);
 
   req.todo = todo;
   req.render = render;
-  console.log('render: ', req.render);
 
   next();
 }, createTodo, renderOrSendTodo);
@@ -88,8 +85,6 @@ router.get('/todo/:id', todoById, renderOrSendTodo);
 router.put('/todo/:id', function(req, res, next) {
   var todoId = req.params.id;
   var todo = parseJson(req.body.data, { verbose: true });
-  console.log('todoId: ', todoId);
-  console.log('todo: ', todo);
   Todo.findOneAndUpdate({ _id: todoId }, todo, handleError(res, function(newTodo) {
     req.todo = newTodo;
     next();
@@ -98,7 +93,6 @@ router.put('/todo/:id', function(req, res, next) {
 
 router.delete('/todo/:id', function(req, res) {
   var todoId = req.params.id;
-  console.log('todoId: ', todoId);
   Todo.remove({ _id: todoId }, handleError(res, function() {
     res.send({ success: true });
   }));
@@ -116,7 +110,6 @@ router.get('/todo/all', function(req, res) {
 
 router.post('/todo/reorder', function(req, res, next) {
   var ids = parseJson(req.body.data, { verbose: true });
-  console.log('ids: ', ids);
   ids.map(function(id, i) {
     Todo.findOneAndUpdate({ _id: id }, { index: i+1 }, function(err) {
       if(err) res.send({ success: false, error: err });

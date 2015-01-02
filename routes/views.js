@@ -51,9 +51,7 @@ auth = function(req, res, next) {
 
 todosByOwner = function(req, res, next) {
   var uid = req.cookies.productivUid;
-  console.log('uid: ', uid);
   Todo.find({ owner: uid }, function(err, todos) {
-    console.log('found todos: ', todos);
     if(err) res.send(err);
     else {
       req.todos = todos;

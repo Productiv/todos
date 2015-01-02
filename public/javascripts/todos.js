@@ -19,6 +19,40 @@ onClickTitle = function(e) {
   $input.val(tmpStr);
 };
 
+onKeydownTitle = function(e) {
+
+  // Press Enter
+  if(e.which === 13 && $(this).val() === '') removeTodo.call(this, e);
+  else if(e.which === 13) submitTitle.call(this, e);
+
+  if(e.which === 27) {
+    renderTitle($(this).parents('.todo'));
+  }
+};
+
+onCheckChange = function(e) {
+  e.preventDefault();
+
+  var $todo = $(this).parents('.todo');
+  var isDone = this.checked;
+  var id = $todo.attr('id');
+
+  if($todo.parents('.todos').hasClass('hide-done')) {
+    $todo.fadeOut('300', function(e) {
+      $(this).toggleClass('done').attr('style', '');
+    });
+  } else $todo.toggleClass('done');
+
+  showUndo('Marked as done.', function() {
+    updateTodo(id, { isDone: isDone }, function(res) { console.log(res); });
+  }, function() {
+    $todo.find('.check').attr('checked', !isDone);
+    $todo.removeClass('done');
+  });
+
+  $todo.children('.title-input').focus();
+};
+
 reloadTodo = function(id) {
   $todo = $('#'+id);
   getTodo(id, function(res, success) {
@@ -85,17 +119,6 @@ submitTitle = function(e) {
   });
 };
 
-onKeydownTitle = function(e) {
-
-  // Press Enter
-  if(e.which === 13 && $(this).val() === '') removeTodo.call(this, e);
-  else if(e.which === 13) submitTitle.call(this, e);
-
-  if(e.which === 27) {
-    renderTitle($(this).parents('.todo'));
-  }
-};
-
 getTodo = function(id, callback) {
   var url = '/api/todo/' + id;
   $.get(url, callback);
@@ -124,7 +147,7 @@ reorderTodos = function(ids, callback) {
   $.post('/api/todo/reorder', { data: JSON.stringify(ids) }, callback);
 };
 
-setTodoOrder = function() {
+saveTodoOrder = function() {
   var ids = $.map($('.todo'), function(todo) { return $(todo).attr('id'); });
   reorderTodos(ids, function(res) { console.log(res); });
 };
@@ -139,7 +162,27 @@ logout = function(callback) {
   };
 };
 
-setShowDone = function(show) {
+sortTodosByDone = function(dir) {
+  var first = (dir === 'asc') ? -1 : 1;
+  var second = (dir === 'asc') ? 1 : -1;
+  var items = $('.todo');
+  items.sort(function(a, b) {
+    if($(a).hasClass('done') && !$(b).hasClass('done'))      return first;
+    else if(!$(a).hasClass('done') && $(b).hasClass('done')) return second;
+    else return 0;
+  });
+  $('.todos').html(items);
+};
+
+sortTodosByIndex = function() {
+  var items = $('.todo');
+  items.sort(function(a, b) {
+    return a.index - b.index;
+  });
+  $('.todos').html(items);
+};
+
+setShowDone = function() {
   if(getCookie('productivShowDone') === 'true') {
     $('.show-done').html('Done: Show');
     $('.todos').removeClass('hide-done');
@@ -168,41 +211,21 @@ $(function() {
         var $todo = $('.todos').children('.todo').first();
         $todo.children('.title').click(onClickTitle);
         $todo.children('.remove').click(removeTodo);
-        setTodoOrder();
+        $todo.children('.check').change(onCheckChange);
+        saveTodoOrder();
         $('.sortable').sortable('reload');
       }
     });
   });
 
-  $('.todo .check').change(function(e) {
-    e.preventDefault();
-
-    var $todo = $(this).parents('.todo');
-    var isDone = this.checked;
-    var id = $todo.attr('id');
-
-    if($todo.parents('.todos').hasClass('hide-done')) {
-      $todo.fadeOut('300', function(e) {
-        $(this).toggleClass('done').attr('style', '');
-      });
-    } else $todo.toggleClass('done');
-
-    showUndo('Marked as done.', function() {
-      updateTodo(id, { isDone: isDone }, function(res) { console.log(res); });
-    }, function() {
-      $todo.find('.check').attr('checked', !isDone);
-      $todo.removeClass('done');
-    });
-
-    $todo.children('.title-input').focus();
-  });
+  $('.todo .check').change(onCheckChange);
 
   $('.todo .title').click(onClickTitle);
 
   $('.sortable').sortable({
     forcePlaceholderSize: true,
     items: ':not(.disabled)'
-  }).bind('sortupdate', setTodoOrder);
+  }).bind('sortupdate', saveTodoOrder);
 
   $('.logout').click(logout(function(res) {
     if(!res.success) console.log(res);
@@ -224,4 +247,10 @@ $(function() {
   }).hover(hoverShowDone, setShowDone);
 
   $('.todo .remove').click(removeTodo);
+
+  $('.done-to-bottom').click(function(e) {
+    sortTodosByDone('desc');
+    saveTodoOrder();
+  });
+
 });
