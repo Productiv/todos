@@ -30,7 +30,8 @@
   margin-left: 0;
 }
 
-.todo:hover {
+.todo .title:hover,
+.todo .remove:hover {
   cursor: pointer;
 }
 
@@ -58,10 +59,7 @@
 
 .todo .title,
 .todo .title-input {
-  margin-left: 10px;
-}
-
-.todo .title-input {
-  display: inline;
+  display: inline-block;
   width: 87.5%;
+  margin-left: 10px;
 }
