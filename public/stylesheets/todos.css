@@ -11,6 +11,10 @@
   margin-bottom: 10px;
 }
 
+.action-bar .btn:not(:first-child) {
+  margin-left: 10px;
+}
+
 .notice {
   margin-left: 10px;
 }
@@ -35,7 +39,7 @@
   cursor: pointer;
 }
 
-.todo.done {
+.todo.done .title {
   text-decoration: line-through;
 }
 
