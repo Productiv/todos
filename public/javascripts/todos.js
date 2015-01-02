@@ -167,7 +167,6 @@ sortTodosByDone = function() {
   var second = (getCookie('productivSortDirection') === 'up') ? 1 : -1;
   var items = $('.todo');
   items.sort(function(a, b) {
-    console.log(a);
     if($(a).hasClass('done') && !$(b).hasClass('done'))      return first;
     else if(!$(a).hasClass('done') && $(b).hasClass('done')) return second;
     else return 0;
@@ -178,7 +177,6 @@ sortTodosByDone = function() {
 sortTodosByIndex = function() {
   var items = $('.todo');
   items.sort(function(a, b) {
-    console.log(a);
     return a.index - b.index;
   });
   $('.todos').html(items);
@@ -195,7 +193,10 @@ setShowDone = function() {
 };
 
 setSortDirection = function() {
-  if(getCookie('productivSortDirection') === 'up') {
+  var dir = getCookie('productivSortDirection');
+  console.log('dir: ', dir);
+  console.log('this: ', this);
+  if(dir === 'up') {
     $(this).addClass('fa-toggle-up')
            .removeClass('fa-toggle-down');
     sortTodosByDone();
@@ -277,6 +278,14 @@ $(function() {
     var dir = getCookie('productivSortDirection');
     if(dir === 'up') setCookie('productivSortDirection', 'down');
     else setCookie('productivSortDirection', 'up');
-    setSortDirection();
+    setSortDirection.call(this, e);
   });
+
+  $('.toggle-sort-by').click(function(e) {
+    var attr = getCookie('productivSortAttribute');
+    if(attr === 'index') setCookie('productivSortAttribute', 'done');
+    else setCookie('productivSortAttribute', 'index');
+    setSortAttribute.call(this, e);
+  });
+
 });
