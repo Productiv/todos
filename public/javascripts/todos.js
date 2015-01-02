@@ -19,6 +19,40 @@ onClickTitle = function(e) {
   $input.val(tmpStr);
 };
 
+onKeydownTitle = function(e) {
+
+  // Press Enter
+  if(e.which === 13 && $(this).val() === '') removeTodo.call(this, e);
+  else if(e.which === 13) submitTitle.call(this, e);
+
+  if(e.which === 27) {
+    renderTitle($(this).parents('.todo'));
+  }
+};
+
+onCheckChange = function(e) {
+  e.preventDefault();
+
+  var $todo = $(this).parents('.todo');
+  var isDone = this.checked;
+  var id = $todo.attr('id');
+
+  if($todo.parents('.todos').hasClass('hide-done')) {
+    $todo.fadeOut('300', function(e) {
+      $(this).toggleClass('done').attr('style', '');
+    });
+  } else $todo.toggleClass('done');
+
+  showUndo('Marked as done.', function() {
+    updateTodo(id, { isDone: isDone }, function(res) { console.log(res); });
+  }, function() {
+    $todo.find('.check').attr('checked', !isDone);
+    $todo.removeClass('done');
+  });
+
+  $todo.children('.title-input').focus();
+};
+
 reloadTodo = function(id) {
   $todo = $('#'+id);
   getTodo(id, function(res, success) {
@@ -85,17 +119,6 @@ submitTitle = function(e) {
   });
 };
 
-onKeydownTitle = function(e) {
-
-  // Press Enter
-  if(e.which === 13 && $(this).val() === '') removeTodo.call(this, e);
-  else if(e.which === 13) submitTitle.call(this, e);
-
-  if(e.which === 27) {
-    renderTitle($(this).parents('.todo'));
-  }
-};
-
 getTodo = function(id, callback) {
   var url = '/api/todo/' + id;
   $.get(url, callback);
@@ -139,7 +162,29 @@ logout = function(callback) {
   };
 };
 
-setShowDone = function(show) {
+sortTodosByDone = function() {
+  var first = (getCookie('productivSortDirection') === 'up') ? -1 : 1;
+  var second = (getCookie('productivSortDirection') === 'up') ? 1 : -1;
+  var items = $('.todo');
+  items.sort(function(a, b) {
+    console.log(a);
+    if($(a).hasClass('done') && !$(b).hasClass('done'))      return first;
+    else if(!$(a).hasClass('done') && $(b).hasClass('done')) return second;
+    else return 0;
+  });
+  $('.todos').html(items);
+};
+
+sortTodosByIndex = function() {
+  var items = $('.todo');
+  items.sort(function(a, b) {
+    console.log(a);
+    return a.index - b.index;
+  });
+  $('.todos').html(items);
+};
+
+setShowDone = function() {
   if(getCookie('productivShowDone') === 'true') {
     $('.show-done').html('Done: Show');
     $('.todos').removeClass('hide-done');
@@ -149,9 +194,32 @@ setShowDone = function(show) {
   }
 };
 
+setSortDirection = function() {
+  if(getCookie('productivSortDirection') === 'up') {
+    $(this).addClass('fa-toggle-up')
+           .removeClass('fa-toggle-down');
+    sortTodosByDone();
+  } else {
+    $(this).addClass('fa-toggle-down')
+           .removeClass('fa-toggle-up');
+    sortTodosByDone();
+  }
+};
+
+setSortAttribute = function() {
+  if(getCookie('productivSortAttribute') === 'done') {
+    $(this).html('Done');
+    sortTodosByDone();
+  } else {
+    $(this).html('None');
+    sortTodosByIndex();
+  }
+};
+
 $(function() {
   // Load settings from cookie
   setShowDone();
+  setSortDirection();
 
   $('.add-todo').keydown(function(e) {
     if(e.which !== 13) return;
@@ -168,34 +236,14 @@ $(function() {
         var $todo = $('.todos').children('.todo').first();
         $todo.children('.title').click(onClickTitle);
         $todo.children('.remove').click(removeTodo);
+        $todo.children('.check').change(onCheckChange);
         setTodoOrder();
         $('.sortable').sortable('reload');
       }
     });
   });
 
-  $('.todo .check').change(function(e) {
-    e.preventDefault();
-
-    var $todo = $(this).parents('.todo');
-    var isDone = this.checked;
-    var id = $todo.attr('id');
-
-    if($todo.parents('.todos').hasClass('hide-done')) {
-      $todo.fadeOut('300', function(e) {
-        $(this).toggleClass('done').attr('style', '');
-      });
-    } else $todo.toggleClass('done');
-
-    showUndo('Marked as done.', function() {
-      updateTodo(id, { isDone: isDone }, function(res) { console.log(res); });
-    }, function() {
-      $todo.find('.check').attr('checked', !isDone);
-      $todo.removeClass('done');
-    });
-
-    $todo.children('.title-input').focus();
-  });
+  $('.todo .check').change(onCheckChange);
 
   $('.todo .title').click(onClickTitle);
 
@@ -224,4 +272,11 @@ $(function() {
   }).hover(hoverShowDone, setShowDone);
 
   $('.todo .remove').click(removeTodo);
+
+  $('.toggle-sort-direction').click(function(e) {
+    var dir = getCookie('productivSortDirection');
+    if(dir === 'up') setCookie('productivSortDirection', 'down');
+    else setCookie('productivSortDirection', 'up');
+    setSortDirection();
+  });
 });

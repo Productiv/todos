@@ -1,5 +1,5 @@
 
-li.todo(id=todo._id, class="#{todo.isDone ? 'done' : ''}")
+li.todo(id=todo._id, class="#{todo.isDone ? 'done' : ''}", data-index=todo.index)
   span.remove
     i.fa.fa-remove.fa-1
   span.check-container
