@@ -8,7 +8,7 @@ html
 
     //- mixins
     //- include mixins/_todo.jade
-  body
+  body(hidden)
     .container
       block content
 
@@ -17,3 +17,7 @@ html
     script(src="/javascripts/lib/html.sortable.min.js")
     script(src="/javascripts/lib/helpers.js")
     block javascripts
+    script.
+      $(function() {
+        $('body').show();
+      });

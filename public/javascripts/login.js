@@ -26,14 +26,14 @@ $(function() {
       if(!res.success) {
         console.log(res);
         var message = (res && res.message) || 'unknown error';
-        $('.notice').html(message);
+        $('.notice').html(message).removeClass('hidden');
         return;
       } else if(res.token && res.uid) {
         setCookie('productivToken', res.token);
         setCookie('productivUid', res.uid);
         location.href = '/';
       } else {
-        $('.notice').html('Server error. Bad token received.');
+        $('.notice').html('Server error. Bad token received.').removeClass('hidden');
       }
     });
   });
@@ -44,8 +44,8 @@ $(function() {
     var email    = $('.signup .email').val();
     var password = $('.signup .password').val();
 
-    if(!email)              $('.notice').html('Email is a required field');
-    else if(!password)      $('.notice').html('Password is a required field');
+    if(!email)              $('.notice').html('Email is a required field').removeClass('hidden');
+    else if(!password)      $('.notice').html('Password is a required field').removeClass('hidden');
     if(!email || !password) return;
 
     $.post('http://accounts.productiv.me/api/signup', {
