@@ -12,7 +12,11 @@ block content
         .col-xs-3
           a.logout.btn.btn-default Logout
       .action-bar
-        a.show-done.btn.btn-xs.btn-default Done: Show
+        a.show-done.action.btn.btn-xs.btn-default Done: Show
+        span.action
+          i.fa.fa-toggle-down.fa-fw
+          | Sort:
+          a.sort-by.btn.btn-xs.btn-default Done
         span.notice
       input.add-todo.form-control(type="text", placeholder="new todo")
       ul.todos.sortable.hide-done

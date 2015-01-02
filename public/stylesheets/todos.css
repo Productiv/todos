@@ -11,7 +11,7 @@
   margin-bottom: 10px;
 }
 
-.action-bar .btn:not(:first-child) {
+.action-bar .action:not(:first-child) {
   margin-left: 10px;
 }
 
