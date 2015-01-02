@@ -141,10 +141,10 @@ logout = function(callback) {
 
 setShowDone = function(show) {
   if(getCookie('productivShowDone') === 'true') {
-    $('.show-done').addClass('active').html('Done: Show');
+    $('.show-done').html('Done: Show');
     $('.todos').removeClass('hide-done');
   } else {
-    $('.show-done').removeClass('active').html('Done: Hidden');
+    $('.show-done').html('Done: Hidden');
     $('.todos').addClass('hide-done');
   }
 };
