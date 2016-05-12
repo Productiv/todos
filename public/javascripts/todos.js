@@ -187,11 +187,13 @@ sortTodosByIndex = function() {
 
 setShowDone = function() {
   if(getCookie('productivShowDone') === 'true') {
-    $('.show-done').html('Done: Show');
+    $('.show-done-toggle').html('Done: Show');
     $('.todos').removeClass('hide-done');
+    $('.show-done-toggle').attr('data-show', 'true');
   } else {
-    $('.show-done').html('Done: Hidden');
+    $('.show-done-toggle').html('Done: Hidden');
     $('.todos').addClass('hide-done');
+    $('.show-done-toggle').attr('data-show', 'false');
   }
 };
 
@@ -238,12 +240,12 @@ $(function() {
 
   hoverShowDone = function(e) {
     if(getCookie('productivShowDone') === 'true')
-      $('.show-done').html('Done: Hide');
+      $('.show-done-toggle').html('Done: Hide');
     else
-      $('.show-done').html('Done: Show');
+      $('.show-done-toggle').html('Done: Show');
   };
 
-  $('.show-done').click(function(e) {
+  $('.show-done-toggle').click(function(e) {
     var show = getCookie('productivShowDone');
     if(show === 'true') setCookie('productivShowDone', 'false');
     else setCookie('productivShowDone', 'true');

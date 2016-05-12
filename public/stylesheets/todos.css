@@ -15,6 +15,10 @@
   margin-left: 10px;
 }
 
+.show-done-toggle[data-show="false"] + .done-to-bottom {
+  display: none;
+}
+
 .notice {
   margin-left: 10px;
 }
